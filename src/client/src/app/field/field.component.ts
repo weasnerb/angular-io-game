@@ -34,7 +34,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
   state?: IGameState;
 
   @Input()
-  player?: IPlayer;
+  currentPlayer?: IPlayer;
   @Input()
   playerColor = DEFAULT_PLAYER_COLOR;
   @Input()
@@ -81,19 +81,19 @@ export class FieldComponent implements AfterViewInit, OnChanges {
     stateX: number,
     stateY: number
   ): { x: number; y: number } | null {
-    if (!this.player || !this.canvas) {
+    if (!this.currentPlayer || !this.canvas) {
       return null;
     }
 
     const playerCanvasX = this.canvas.clientWidth / 2;
     const playerCanvasY = this.canvas.clientHeight / 2;
 
-    const x = playerCanvasX - (this.player.x - stateX) * SCALE;
+    const x = playerCanvasX - (this.currentPlayer.x - stateX) * SCALE;
     if (x < 0 || x > this.canvas.width) {
       return null;
     }
 
-    const y = playerCanvasY - (this.player.y - stateY) * SCALE;
+    const y = playerCanvasY - (this.currentPlayer.y - stateY) * SCALE;
     if (y < 0 || y > this.canvas.height) {
       return null;
     }
@@ -116,7 +116,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
       this.playerSize,
       this.playerColor,
       'black',
-      this.player?.name ?? DEFAULT_PLAYER_NAME
+      this.currentPlayer?.name ?? DEFAULT_PLAYER_NAME
     );
   }
 
@@ -146,7 +146,7 @@ export class FieldComponent implements AfterViewInit, OnChanges {
     }
 
     const visiblePlayers = this.state.players
-      .filter((p) => p !== this.player)
+      .filter((p) => p !== this.currentPlayer)
       .map((p) => ({
         player: p,
         canvasCoord: this.getCanvasCoordinatesFromStateCoordinates(p.x, p.y),
@@ -174,14 +174,14 @@ export class FieldComponent implements AfterViewInit, OnChanges {
     }
 
     this.ctx.strokeStyle = 'lightgray';
-    const startX = ((this.player?.x ?? 0) % GRID_SCALE) * SCALE;
+    const startX = ((this.currentPlayer?.x ?? 0) % GRID_SCALE) * SCALE;
     for (let x = this.width - startX; x >= 0; x -= SCALE * GRID_SCALE) {
       this.ctx.beginPath();
       this.ctx.moveTo(x, 0);
       this.ctx.lineTo(x, this.height);
       this.ctx.stroke();
     }
-    const startY = ((this.player?.y ?? 0) % GRID_SCALE) * SCALE;
+    const startY = ((this.currentPlayer?.y ?? 0) % GRID_SCALE) * SCALE;
     for (let y = this.height - startY; y >= 0; y -= SCALE * GRID_SCALE) {
       this.ctx.beginPath();
       this.ctx.moveTo(0, y);

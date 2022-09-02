@@ -1,10 +1,11 @@
 <div class="leaderboard">
   <ng-container *ngIf="state">
-    <div
-      *ngFor="let playa of state.players | sort: 'score':true"
-      [class.player]="player?.id === playa.id"
-    >
-      {{ playa.name }}: {{ playa.score }}
-    </div>
+    <h2>Rank:</h2>
+    <ol>
+      <li *ngFor="let player of state.players | sort: 'score':true"
+          [class.player]="currentPlayer?.id === player.id">
+        {{ player.name }} ({{ player.score }})
+      </li>
+    </ol>
   </ng-container>
 </div>

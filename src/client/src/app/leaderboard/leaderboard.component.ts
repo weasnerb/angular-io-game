@@ -11,7 +11,7 @@ export class LeaderboardComponent implements OnInit {
   state?: IGameState;
 
   @Input()
-  player?: IPlayer;
+  currentPlayer?: IPlayer;
 
   constructor() {}
 

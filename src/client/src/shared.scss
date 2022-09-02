@@ -1,6 +1,11 @@
 $zIndexOverlay: 1;
 $zIndexGameField: 0;
 
+
+$background: #091125;
+$primary: #D5F8FF;
+$secondary: #EFD121;
+
 @mixin fullScreen() {
   margin: 0;
   width: 100%;
@@ -11,3 +16,4 @@ $zIndexGameField: 0;
   max-height: 100%;
   overflow: hidden;
 }
+

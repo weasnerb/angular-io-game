@@ -1,8 +1,23 @@
+@import '../../shared';
+
 .leaderboard {
-  border: solid black 1px;
-  background-color: white;
-  padding: 5px;
+  border: solid $secondary 2px;
+  background-color: $background;
+  color: $secondary;
+  padding: .5rem;
+  border-radius: .5rem;
+
+  h2 {
+    font-size: 1.2rem;
+    margin: 0 0 .25rem;
+  }
+
+  ol {
+    margin: 0;
+  }
+
+  .player {
+    font-weight: bold;
+  }
 }
-.player {
-  font-weight: bold;
-}
+
