@@ -53,7 +53,7 @@ export class GameService implements OnDestroy {
     this.playerId = await this.connectionService.connect(playerName);
 
     this.connectionService.messages.pipe(
-      takeUntil(this.state.pipe(filter((gameState) => gameState === null)))
+      takeUntil(this.unsubscribe)
     ).subscribe((data) => {
       switch (data.event) {
         case 'stateChanged':
