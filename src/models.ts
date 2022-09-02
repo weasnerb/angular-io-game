@@ -22,5 +22,5 @@ export interface ICoin {
   isDeadly?: boolean;
 }
 
-export type Command = 'left' | 'right' | 'up' | 'down';
-export type Commands = Record<string, Command>;
+export type MoveCommand = 'left' | 'right' | 'up' | 'down';
+export type Commands = Record<string, MoveCommand>;

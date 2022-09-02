@@ -10,6 +10,8 @@ import { FieldComponent } from './field/field.component';
 import { NewGameDialogComponent } from './new-game-dialog/new-game-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SortPipe } from './leaderboard/sort.pipe';
+import { CssFieldComponent } from './css-field/css-field.component';
+import { SettingsComponent } from './settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { SortPipe } from './leaderboard/sort.pipe';
     FieldComponent,
     NewGameDialogComponent,
     SortPipe,
+    CssFieldComponent,
+    SettingsComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [],

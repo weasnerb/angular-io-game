@@ -1,19 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { IGameState, IPlayer } from '../../../../models';
+import { Component } from '@angular/core';
+import { GameService } from '../game/game.service';
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.scss'],
 })
-export class LeaderboardComponent implements OnInit {
-  @Input()
-  state?: IGameState;
+export class LeaderboardComponent {
+  constructor(public gameService: GameService) {
+  }
 
-  @Input()
-  currentPlayer?: IPlayer;
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }

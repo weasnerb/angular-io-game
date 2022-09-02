@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Server as SocketIoServer } from 'socket.io';
 import { join } from 'path';
 import { Game } from './game';
-import { Command } from './models';
+import { MoveCommand } from './models';
 
 console.info(`starting app...`);
 
@@ -33,7 +33,7 @@ io.on('connection', async (socket) => {
     (reason) => socket.emit('gameOver', reason)
   );
   socket.conn.on('close', () => game.drop(socket.id));
-  socket.on('command', (command: Command) =>
+  socket.on('command', (command: MoveCommand) =>
     game.onPlayerCommand(socket.id, command)
   );
   // initial push of state

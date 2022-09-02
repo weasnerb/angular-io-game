@@ -13,11 +13,11 @@ export class NewGameDialogComponent implements OnInit {
 
   constructor(private stateService: StateService, private router: Router) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.nameControl.patchValue(this.stateService.playerName);
   }
 
-  joinGame() {
+  public joinGame() {
     if (this.nameControl.invalid) {
       return;
     }

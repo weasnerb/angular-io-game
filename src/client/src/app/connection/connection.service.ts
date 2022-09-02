@@ -1,100 +1,86 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { Observable, fromEvent, merge } from 'rxjs';
+import { Observable, fromEvent, merge, Subject, concat, firstValueFrom } from 'rxjs';
 import { first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { Command, IGameState } from '../../../../models';
+import { MoveCommand, IGameState } from '../../../../models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ConnectionService {
-  constructor() {}
-
-  getConnection(): Connection {
-    return new Connection();
-  }
-}
-
-export class Connection {
+export class ConnectionService implements OnDestroy {
   private socket?: Socket<any, any>;
-  private _dataStream?: Observable<IMessage>;
+
+  public messages: Subject<IMessage> = new Subject<IMessage>();
 
   constructor() {}
 
-  async connect(name: string): Promise<string> {
-    const socketProtocol = window.location.protocol.includes('https')
-      ? 'wss'
-      : 'ws';
-    const socket = io(`${socketProtocol}://${window.location.host}`, {
+  public ngOnDestroy(): void {
+    
+  }
+
+  public async connect(name: string): Promise<string> {
+    const socketProtocol = window.location.protocol.includes('https') ? 'wss' : 'ws';
+    this.socket = io(`${socketProtocol}://${window.location.host}`, {
       reconnection: false,
     });
-
-    const stateChange$ = fromEvent(socket, 'stateChanged').pipe(
-      map(
-        (state: IGameState) =>
-          ({
-            event: 'stateChanged',
-            state,
-          } as IMessage)
-      ),
+    
+    const stateChange$ = fromEvent<IGameState>(this.socket, 'stateChanged').pipe(
+      map((state) => {
+        return {
+          event: 'stateChanged',
+          state,
+        } as IMessage;
+      }),
       tap((s) => console.debug({ stateChanged: s }))
     );
 
-    const gameOver$ = fromEvent(socket, 'gameOver').pipe(
-      map(
-        (reason: string) =>
-          ({
-            event: 'gameOver',
-            reason,
-          } as IMessage)
-      ),
+    const gameOver$ = fromEvent<string>(this.socket, 'gameOver').pipe(
+      map((reason) => {
+        return {
+          event: 'gameOver',
+          reason,
+        } as IMessage;
+      }),
       tap((s) => console.debug({ gameOver: s }))
     );
 
-    const disconnect$ = fromEvent(socket, 'disconnect').pipe(
+    const disconnect$ = fromEvent(this.socket, 'disconnect').pipe(
       tap(() => {
         console.log('socket disconnected');
         this.dispose();
       })
     );
 
-    const connectionStream = fromEvent(socket, 'connect').pipe(
-      first(),
-      tap(() => socket.emit('name', name)),
-      tap(() => console.log(`connected on socket ${socket.id} as ${name}`))
-    );
-
-    this._dataStream = connectionStream.pipe(
-      switchMap(() => merge(stateChange$, gameOver$)),
+    concat(stateChange$, gameOver$).pipe(
       takeUntil(disconnect$)
-    );
+    ).subscribe(this.messages);
 
-    this.socket = socket;
+    this.socket.connect();
+    
+    await firstValueFrom(fromEvent(this.socket, 'connect').pipe(
+      tap(() => this.socket?.emit('name', name)),
+    ));
 
-    while (!socket.id) {
-      await new Promise((resolve) => setTimeout(resolve, 20));
-    }
+    console.log(`connected on socket ${this.socket.id} as ${name}`)
 
-    return socket.id;
+    return this.socket.id;
   }
 
-  get dataStream(): Observable<IMessage> | undefined {
-    return this._dataStream;
-  }
 
-  sendCommand(command: Command) {
-    console.debug(`sending command: ${command}`);
+  public sendCommand(command: MoveCommand): void {
     if (!this.socket) {
-      throw new Error('Failed to send data: no connected socket');
+      console.debug(`Failed to send data: no connected socket`);
+      return;
     }
 
     this.socket.emit('command', command);
   }
 
-  dispose() {
+  public dispose() {
     this.socket?.disconnect();
     this.socket = undefined;
-    this._dataStream = undefined;
+    this.messages.complete();
+    this.messages = new Subject();
   }
 }
 

@@ -7,17 +7,27 @@
   position: relative;
 }
 
-app-leaderboard {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: $zIndexOverlay;
-}
-
 app-field {
   @include fullScreen();
   z-index: $zIndexGameField;
 }
+
+.overlay-control {
+  position: absolute;
+  z-index: $zIndexOverlay;
+}
+
+app-leaderboard {
+  top: 1rem;
+  right: 2rem;
+}
+
+app-settings {
+  bottom: 1rem;
+  right: 2rem;
+}
+
+
 
 app-player {
   position: absolute;

@@ -1,5 +1,5 @@
 import { gameLogic, getInitialState, getUnoccupiedLocation } from './logic';
-import { Command, Commands, IGameState } from './models';
+import { MoveCommand, Commands, IGameState } from './models';
 
 export type UpdateCallback = (gameState: IGameState) => void;
 export type GameOverCallback = (reason: string) => void;
@@ -66,7 +66,7 @@ export class Game {
     }
   }
 
-  onPlayerCommand(playerId: string, command: Command) {
+  onPlayerCommand(playerId: string, command: MoveCommand) {
     this.playerCommands[playerId] = command;
   }
 
